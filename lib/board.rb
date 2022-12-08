@@ -7,42 +7,31 @@ class Board
   attr_reader :spaces
 
   def initialize(x, y)
-    make_spaces
     @root = Knight.new([x, y])
-    @spaces.delete([x, y])
-    make_tree
+    trace_ancestry(level_order_search).reverse
   end
 
-  def make_spaces
-    x = 0
-    @spaces = []
-    while x < 8
-      y = 0
-      while y < 8
-        @spaces << [x, y]
-        y += 1
+  def level_order_search(target_position = [0, 0])
+    knight_queue = [@root]
+    current = knight_queue.shift
+    until current.position == target_position
+      current.moves.each do |move|
+        current.children << knight = Knight.new(move, current)
+        knight_queue << knight
       end
-      x += 1
+      current = knight_queue.shift
     end
+    current
   end
 
-  def make_tree(current = @root)
-    return if @spaces.empty?
-
-    current.moves.each do |move|
-      if @spaces.include?([move[0], move[1]])
-        current.children << Knight.new([move[0], move[1]], current) 
-        @spaces.delete([move[0], move[1]])
-      end
+  def trace_ancestry(knight, ancestors = [])
+    until knight.position == @root.position
+      ancestors << knight.position
+      knight = knight.parent
     end
-
-    current.children.each { |child| make_tree(child) }
+    ancestors << knight.position
   end
 
-  # def print_moves(knight = @root)
-  #   return if knight.nil?
-
-  #   p knight.position
-  #   print_moves(knight.child_moves)
-  # end
+  def print_path
+  end
 end
