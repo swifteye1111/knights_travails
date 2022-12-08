@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'board'
-
 # Knight class
 class Knight
   attr_reader :position, :moves, :parent

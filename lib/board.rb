@@ -4,17 +4,17 @@ require_relative 'knight'
 
 # Game board class
 class Board
-  attr_reader :spaces
-
-  def initialize(x, y)
-    @root = Knight.new([x, y])
-    trace_ancestry(level_order_search).reverse
+  def initialize(start_x, start_y, end_x, end_y)
+    @root = Knight.new([start_x, start_y])
+    print_path(trace_ancestry(navigate([end_x, end_y])))
   end
 
-  def level_order_search(target_position = [0, 0])
+  private
+
+  def navigate(end_position)
     knight_queue = [@root]
     current = knight_queue.shift
-    until current.position == target_position
+    until current.position == end_position
       current.moves.each do |move|
         current.children << knight = Knight.new(move, current)
         knight_queue << knight
@@ -32,6 +32,8 @@ class Board
     ancestors << knight.position
   end
 
-  def print_path
+  def print_path(path)
+    puts "#{path.reverse}"
+    puts "You made it in #{path.length-1} moves!"
   end
 end
